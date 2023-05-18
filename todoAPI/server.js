@@ -2,11 +2,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+
 // Create an instance of Express
 const app = express();
 
 // Connect to MongoDB Atlas
-mongoose.connect('mongodb+srv://todouser:CityU%40123@todocluster.es1pfmr.mongodb.net/todo', {
+mongoose.connect('mongodb+srv://todouser:<Password>@todocluster.es1pfmr.mongodb.net/todo', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -36,6 +37,25 @@ app.get('/todos', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+app.get('/todos/:todoIndex', async (req, res) => {
+  try {
+    const { todoIndex } = req.params;
+
+    // Fetch a specific todo by its todoIndex
+    const todo = await Todo.findOne({ todoIndex });
+    
+    if (!todo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+    
+    res.json(todo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 app.post('/todos', async (req, res) => {
   try {
@@ -75,7 +95,7 @@ app.delete('/todos/:todoIndex', async (req, res) => {
 });
 
 // Start the server
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
