@@ -26,6 +26,12 @@ const Todo = mongoose.model('Todo', todoSchema);
 // Configure the middleware to parse JSON
 app.use(express.json());
 
+// Add CORS middleware to allow traffic from all domains
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 // Define the routes
 app.get('/todos', async (req, res) => {
   try {
